@@ -9,7 +9,20 @@ using System.Collections;
 
 namespace gamelogic
 {
-    public delegate void ShowPlayerHandler(Player player, bool visible);
+    public delegate void UpdateInfoEvent(UpdateInfo updateInfo);
+
+    public class UpdateInfo : MarshalByRefObject
+    {
+        public UpdateInfo()
+        {
+
+        }
+
+        public String getS()
+        {
+            return "БЛЭТ НАВЭЛЬНЫЙ";
+        }
+    }
 
     public class Ball : MarshalByRefObject
     {
@@ -193,6 +206,8 @@ namespace gamelogic
 
     public class Game : MarshalByRefObject
     {
+        public event UpdateInfoEvent UpdateInfoHandle;
+        protected UpdateInfo updateInfo = new UpdateInfo();
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
         protected Ball ball;
         protected int width = 427, height = 209;
@@ -200,6 +215,7 @@ namespace gamelogic
         public Game()
         {
             Console.WriteLine("Heloo!");
+            doUpdateInfo();
         }
 
         public Player Connect() {
@@ -211,7 +227,16 @@ namespace gamelogic
             Player p = new Player(this, players.Count);
             players.Add(p);
             OnShowPlayer(p, true);
+            doUpdateInfo();
             return p;
+        }
+
+        public void doUpdateInfo()
+        {
+            if (UpdateInfoHandle != null)
+            {
+                UpdateInfoHandle(updateInfo);
+            }
         }
 
         public void CreateBall()
