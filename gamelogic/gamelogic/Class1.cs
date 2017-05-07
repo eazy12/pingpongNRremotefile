@@ -11,7 +11,7 @@ namespace gamelogic
 {
     public delegate void ShowPlayerHandler(Player player, bool visible);
 
-    public class Ball
+    public class Ball : MarshalByRefObject
     {
         protected int x, y, width = 5, height = 5, speed = 5;
         protected bool goingLeft = false;
@@ -121,7 +121,7 @@ namespace gamelogic
         }
     }
 
-    public class Player
+    public class Player : MarshalByRefObject
     {
         protected int x, y, width = 5, height = 50;
         protected Game game;
@@ -191,11 +191,16 @@ namespace gamelogic
         }
     }
 
-    public class Game
+    public class Game : MarshalByRefObject
     {
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
         protected Ball ball;
         protected int width = 427, height = 209;
+
+        public Game()
+        {
+            Console.WriteLine("Heloo!");
+        }
 
         public Player Connect() {
             if (players.Count > 1)
