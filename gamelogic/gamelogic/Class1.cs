@@ -226,17 +226,13 @@ namespace gamelogic
 
             Player p = new Player(this, players.Count);
             players.Add(p);
-            OnShowPlayer(p, true);
             doUpdateInfo();
             return p;
         }
 
         public void doUpdateInfo()
         {
-            if (UpdateInfoHandle != null)
-            {
-                UpdateInfoHandle(updateInfo);
-            }
+            UpdateInfoHandle?.Invoke(updateInfo);
         }
 
         public void CreateBall()
@@ -245,18 +241,17 @@ namespace gamelogic
         }
 
         public void Disconnect(Player p) {
-            OnShowPlayer(p, false);
             players.Remove(p);
-        }
-
-        public void OnShowPlayer(Player p, bool visible) {
-            //if (ShowPlayer != null)
-           //     ShowPlayer(p, visible);
         }
 
         public void AddScore(Player p)
         {
             p.Score += 1;
+        }
+
+        public void changePosition()
+        {
+            doUpdateInfo();
         }
 
         public void Tick()
