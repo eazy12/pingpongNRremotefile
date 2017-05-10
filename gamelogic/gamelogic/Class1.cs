@@ -17,11 +17,6 @@ namespace gamelogic
         {
 
         }
-
-        public String getS()
-        {
-            return "БЛЭТ НАВЭЛЬНЫЙ";
-        }
     }
 
     public class Ball : MarshalByRefObject
@@ -155,6 +150,29 @@ namespace gamelogic
             y = 0;
         }
 
+        public void changePosition(String position)
+        {
+            if (position == "up")
+            {
+                Y = Y - game.speedSlide;
+
+                if (Y < 0)
+                {
+                    Y = 0;
+                }
+            } else
+            {
+                Y = Y + game.speedSlide;
+
+                if (Y > game.Height)
+                {
+                    Y = game.Height;
+                }
+            }
+
+            game.changePosition();
+        }
+
         public int Score
         {
             get
@@ -210,7 +228,8 @@ namespace gamelogic
         protected UpdateInfo updateInfo = new UpdateInfo();
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
         protected Ball ball;
-        protected int width = 427, height = 209;
+        protected int width = 450, height = 200;
+        public int speedSlide = 3;
 
         public Game()
         {
