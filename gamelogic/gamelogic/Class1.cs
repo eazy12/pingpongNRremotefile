@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Drawing;
 using System.Collections;
+using System.Timers;
 
 namespace gamelogic
 {
@@ -26,9 +22,11 @@ namespace gamelogic
         protected bool goingTop = false;
         protected Game game;
         private Random r = new Random();
+        public String status = "inactive"; // ENUM: inactive/active
 
         public Ball(Game g)
         {
+            game = g;
             initLocation();
         }
 
@@ -45,6 +43,11 @@ namespace gamelogic
         {
             goingLeft = !goingLeft;
             goingTop = Convert.ToBoolean(r.Next(0, 1));
+        }
+
+        public void setStatus(String newStatus)
+        {
+            status = newStatus;
         }
 
         public void move()
@@ -98,6 +101,10 @@ namespace gamelogic
             {
                 return x;
             }
+            set
+            {
+                x = value;
+            }
         }
 
         public int Y
@@ -150,7 +157,7 @@ namespace gamelogic
             y = 0;
         }
 
-        public void changePosition(String position)
+        public void ChangePosition(String position)
         {
             if (position == "up")
             {
@@ -170,7 +177,7 @@ namespace gamelogic
                 }
             }
 
-            game.changePosition();
+            game.ChangePosition();
         }
 
         public int Score
@@ -230,11 +237,19 @@ namespace gamelogic
         protected Ball ball;
         protected int width = 450, height = 200;
         public int speedSlide = 3;
+        public String status = "init"; // ENUM: init/playing/finish
+
+        public System.Timers.Timer TickTimer;
 
         public Game()
         {
-            Console.WriteLine("Heloo!");
-            doUpdateInfo();
+            CreateBall();
+            //Tick();
+
+            TickTimer = new System.Timers.Timer(5);
+            TickTimer.Elapsed += Tick; 
+            TickTimer.AutoReset = true;
+            TickTimer.Enabled = true;
         }
 
         public Player Connect() {
@@ -245,11 +260,12 @@ namespace gamelogic
 
             Player p = new Player(this, players.Count);
             players.Add(p);
-            doUpdateInfo();
+
+            //Tick();
             return p;
         }
 
-        public void doUpdateInfo()
+        public void DoUpdateInfo()
         {
             UpdateInfoHandle?.Invoke(updateInfo);
         }
@@ -268,18 +284,43 @@ namespace gamelogic
             p.Score += 1;
         }
 
-        public void changePosition()
+        public void ChangePosition()
         {
-            doUpdateInfo();
+            //Tick();
         }
 
-        public void Tick()
+        public void SetStatus(String newStatus)
         {
-            if (ball.isGoingLeft)  
+            status = newStatus;
+
+            if (status == "playing")
             {
-                if (CollisionLeft(ball))    
+                ball.setStatus("active");
+            }
+        }
+
+        public void Tick(Object source, ElapsedEventArgs e)
+        {
+            if (status == "playing")
+            {
+                BallControl();
+            }
+
+            DoUpdateInfo();
+        }
+
+        public void BallControl()
+        {
+            if (ball.status != "active")
+            {
+                return;
+            }
+
+            if (ball.isGoingLeft)
+            {
+                if (CollisionLeft(ball))
                 {
-                    AddScore((Player)players[0]);     
+                    AddScore((Player)players[0]);
                     ball.initLocation();
                 }
                 if (!CollisionPlayer((Player)players[0]))
@@ -287,13 +328,13 @@ namespace gamelogic
                     ball.move();
                 }
                 else
-                {                              
+                {
                     ball.changeOrientation();
                 }
             }
             else
             {
-                if (CollisionRight(ball))  
+                if (CollisionRight(ball))
                 {
                     AddScore((Player)players[1]);
                     ball.initLocation();
@@ -368,6 +409,14 @@ namespace gamelogic
             get
             {
                 return height;
+            }
+        }
+
+        public Ball Ball
+        {
+            get
+            {
+                return ball;
             }
         }
 
