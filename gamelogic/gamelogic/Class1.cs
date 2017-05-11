@@ -17,7 +17,7 @@ namespace gamelogic
 
     public class Ball : MarshalByRefObject
     {
-        protected int x, y, width = 14, height = 16, speed = 5;
+        protected int x, y, width = 14, height = 16, speed = 2;
         protected bool goingLeft = false;
         protected bool goingTop = false;
         protected Game game;
@@ -63,11 +63,11 @@ namespace gamelogic
 
             if (isGoingTop)
             {
-                y -= speed;
+                //y -= speed;
             }
             else
             {
-                y += speed;
+                //y += speed;
             }
         }
 
