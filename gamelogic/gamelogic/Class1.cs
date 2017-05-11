@@ -17,7 +17,7 @@ namespace gamelogic
 
     public class Ball : MarshalByRefObject
     {
-        protected int x, y, width = 5, height = 5, speed = 5;
+        protected int x, y, width = 5, height = 5, speed = 2;
         protected bool goingLeft = false;
         protected bool goingTop = false;
         protected Game game;
@@ -61,14 +61,14 @@ namespace gamelogic
                 x += speed;
             }
 
-            if (isGoingTop)
-            {
-                y -= speed;
-            }
-            else
-            {
-                y += speed;
-            }
+            //if (isGoingTop)
+            //{
+            //    y -= speed;
+            //}
+            //else
+            //{
+            //    y += speed;
+            //}
         }
 
         public bool isGoingLeft
@@ -301,6 +301,7 @@ namespace gamelogic
 
         public void Tick(Object source, ElapsedEventArgs e)
         {
+            Console.WriteLine("AYAZ TY OSHIBSYA");
             if (status == "playing")
             {
                 BallControl();
