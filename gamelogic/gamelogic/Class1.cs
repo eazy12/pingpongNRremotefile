@@ -17,7 +17,7 @@ namespace gamelogic
 
     public class Ball : MarshalByRefObject
     {
-        protected int x, y, width = 5, height = 5, speed = 2;
+        protected int x, y, width = 14, height = 16, speed = 5;
         protected bool goingLeft = false;
         protected bool goingTop = false;
         protected Game game;
@@ -138,7 +138,7 @@ namespace gamelogic
 
     public class Player : MarshalByRefObject
     {
-        protected int x, y, width = 5, height = 50;
+        protected int x, y, width = 15, height = 70;
         protected Game game;
         protected int score = 0;
 
@@ -151,7 +151,7 @@ namespace gamelogic
                 x = 10;
             } else
             {
-                x = g.Width - 10;
+                x = g.Width - 40;
             }
 
             y = 0;
@@ -171,9 +171,9 @@ namespace gamelogic
             {
                 Y = Y + game.speedSlide;
 
-                if (Y > game.Height)
+                if (Y  > game.AcitveHeight)
                 {
-                    Y = game.Height;
+                    Y = game.AcitveHeight;
                 }
             }
 
@@ -235,7 +235,7 @@ namespace gamelogic
         protected UpdateInfo updateInfo = new UpdateInfo();
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
         protected Ball ball;
-        protected int width = 450, height = 200;
+        protected int width = 450, height = 200, menuHeight = 70;
         public int speedSlide = 3;
         public String status = "init"; // ENUM: init/playing/finish
 
@@ -410,6 +410,14 @@ namespace gamelogic
             get
             {
                 return height;
+            }
+        }
+
+        public int AcitveHeight
+        {
+            get
+            {
+                return height - menuHeight;
             }
         }
 
