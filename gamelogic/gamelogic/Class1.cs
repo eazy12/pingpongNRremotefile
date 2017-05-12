@@ -148,10 +148,10 @@ namespace gamelogic
             
             if (playerNum == 0)
             {
-                x = 10;
+                x = 0;
             } else
             {
-                x = g.Width - height/2;
+                x = g.Width - width;
             }
 
             y = 0;
@@ -243,6 +243,7 @@ namespace gamelogic
 
         public Game()
         {
+            Console.WriteLine("I am created");
             CreateBall();
             //Tick();
 
@@ -353,8 +354,8 @@ namespace gamelogic
 
         public Boolean CollisionPlayer(Player player)
         {
-            if ((Math.Abs(ball.X - player.X) <= (player.Width + ball.Width)/2) &&
-                (Math.Abs(ball.Y - player.Y) <= (player.Height + ball.Height)/2))
+            if ((Math.Abs(ball.X - player.X) <= player.Width) &&
+                ( (player.Y - ball.Height < ball.Y) && (( player.Y + player.Height ) >= ball.Y)))
             {
                 return true;
             }
