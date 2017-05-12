@@ -151,7 +151,7 @@ namespace gamelogic
                 x = 10;
             } else
             {
-                x = g.Width - 40;
+                x = g.Width - height/2;
             }
 
             y = 0;
@@ -353,8 +353,8 @@ namespace gamelogic
 
         public Boolean CollisionPlayer(Player player)
         {
-            if ((Math.Abs(ball.X - player.X) < player.Width + ball.Width) &&
-                (Math.Abs(ball.Y - player.Y) < player.Height + ball.Height))
+            if ((Math.Abs(ball.X - player.X) <= (player.Width + ball.Width)/2) &&
+                (Math.Abs(ball.Y - player.Y) <= (player.Height + ball.Height)/2))
             {
                 return true;
             }
@@ -372,7 +372,7 @@ namespace gamelogic
 
         public Boolean CollisionRight(Ball _ball)
         {
-            if (_ball.X + ball.Width >= Width) 
+            if (_ball.X + ball.Width/2 >= Width) 
             {
                 return true;
             }
@@ -390,7 +390,7 @@ namespace gamelogic
 
         public Boolean CollisionDown(Ball _ball)
         {
-            if (_ball.Y + ball.Height >= Height) 
+            if (_ball.Y + ball.Height/2 >= Height) 
             {
                 return true;
             }
