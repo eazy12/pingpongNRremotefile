@@ -17,7 +17,7 @@ namespace gamelogic
 
     public class Ball : MarshalByRefObject
     {
-        protected int x, y, width = 14, height = 16, speed = 2;
+        protected int x, y, width = 14, height = 16, speedY = 2, speedX = 2;
         protected bool goingLeft = false;
         protected bool goingTop = false;
         protected Game game;
@@ -54,20 +54,43 @@ namespace gamelogic
         {
             if (isGoingLeft)
             {
-                x -= speed;
+                x -= speedX;
             }
             else
             {
-                x += speed;
+                x += speedX;
             }
 
             if (isGoingTop)
             {
-                //y -= speed;
+                y -= speedY;
             }
             else
             {
-                //y += speed;
+                y += speedY;
+            }
+        }
+        public int SpeedY
+        {
+            get
+            {
+                return speedY;
+            }
+            set
+            {
+                speedY = value;
+            }
+        }
+
+        public int SpeedX
+        {
+            get
+            {
+                return speedX;
+            }
+            set
+            {
+                speedX = value;
             }
         }
 
@@ -235,7 +258,7 @@ namespace gamelogic
         protected UpdateInfo updateInfo = new UpdateInfo();
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
         protected Ball ball;
-        protected int width = 450, height = 200, menuHeight = 70;
+        protected int width = 427, height = 241, menuHeight = 70;
         public int speedSlide = 3;
         public String status = "init"; // ENUM: init/playing/finish
 
@@ -325,6 +348,14 @@ namespace gamelogic
                     AddScore((Player)players[0]);
                     ball.initLocation();
                 }
+                if (CollisionDown(ball))
+                {
+                    ball.isGoingTop = true;
+                }
+                if (CollisionUp(ball))
+                {
+                    ball.isGoingTop = false;
+                }
                 if (!CollisionPlayer((Player)players[0]))
                 {
                     ball.move();
@@ -340,6 +371,14 @@ namespace gamelogic
                 {
                     AddScore((Player)players[1]);
                     ball.initLocation();
+                }
+                if (CollisionUp(ball))
+                {
+                    ball.isGoingTop = false;
+                }
+                if (CollisionDown(ball))
+                {
+                    ball.isGoingTop = true;
                 }
                 if (!CollisionPlayer((Player)players[1]))
                 {
@@ -391,7 +430,7 @@ namespace gamelogic
 
         public Boolean CollisionDown(Ball _ball)
         {
-            if (_ball.Y + ball.Height/2 >= Height) 
+            if (_ball.Y + ball.Height >= 200) 
             {
                 return true;
             }
