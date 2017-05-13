@@ -194,9 +194,9 @@ namespace gamelogic
             {
                 Y = Y + game.speedSlide;
 
-                if (Y  > game.AcitveHeight)
+                if (Y  > game.AcitveHeight - Height)
                 {
-                    Y = game.AcitveHeight;
+                    Y = game.AcitveHeight - Height;
                 }
             }
 
@@ -258,8 +258,8 @@ namespace gamelogic
         protected UpdateInfo updateInfo = new UpdateInfo();
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
         protected Ball ball;
-        protected int width = 427, height = 241, menuHeight = 70;
-        public int speedSlide = 3;
+        protected int width = 427, height = 241;
+        public int speedSlide = 5;
         public String status = "init"; // ENUM: init/playing/finish
 
         public System.Timers.Timer TickTimer;
@@ -430,7 +430,7 @@ namespace gamelogic
 
         public Boolean CollisionDown(Ball _ball)
         {
-            if (_ball.Y + ball.Height >= 200) 
+            if (_ball.Y + ball.Height >= AcitveHeight) 
             {
                 return true;
             }
@@ -457,7 +457,7 @@ namespace gamelogic
         {
             get
             {
-                return height - menuHeight;
+                return height;
             }
         }
 
