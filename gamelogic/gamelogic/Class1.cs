@@ -325,7 +325,6 @@ namespace gamelogic
 
         public void Tick(Object source, ElapsedEventArgs e)
         {
-            Console.WriteLine("AYAZ TY OSHIBSYA");
             if (status == "playing")
             {
                 BallControl();
