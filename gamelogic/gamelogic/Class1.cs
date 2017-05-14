@@ -277,6 +277,7 @@ namespace gamelogic
         }
 
         public Player Connect() {
+            Console.WriteLine("Connect is called");
             if (players.Count > 1)
             {
                 return null;
