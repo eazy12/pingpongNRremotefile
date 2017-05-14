@@ -5,8 +5,6 @@ using System.Timers;
 
 namespace gamelogic
 {
-    public delegate void UpdateInfoEvent(UpdateInfo updateInfo);
-
     public class UpdateInfo : MarshalByRefObject
     {
         public UpdateInfo()
@@ -254,7 +252,8 @@ namespace gamelogic
 
     public class Game : MarshalByRefObject
     {
-        public event UpdateInfoEvent UpdateInfoHandle;
+        public delegate void UpdateInfoHandler(object sender, EventArgs e);
+        public event UpdateInfoHandler UpdateInfoEvent;
         protected UpdateInfo updateInfo = new UpdateInfo();
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
         protected Ball ball;
@@ -263,6 +262,8 @@ namespace gamelogic
         public String status = "init"; // ENUM: init/playing/finish
 
         public System.Timers.Timer TickTimer;
+
+        protected Action callback;
 
         public Game()
         {
@@ -278,7 +279,7 @@ namespace gamelogic
 
         public Player Connect() {
             Console.WriteLine("Connect is called");
-            if (players.Count > 1)
+            if (players.Count > 2)
             {
                 return null;
             }
@@ -290,9 +291,26 @@ namespace gamelogic
             return p;
         }
 
+        public Player getPlayer(int index)
+        {
+            if (players.Count > index)
+            {
+                return (Player)players[index];
+            } else
+            {
+                return null;
+            }
+        }
+
+        public void setCallback(Action cb)
+        {
+            callback = cb;
+        }
+
         public void DoUpdateInfo()
         {
-            UpdateInfoHandle?.Invoke(updateInfo);
+            //UpdateInfoEvent?.Invoke(this, new EventArgs());
+            callback?.Invoke();
         }
 
         public void CreateBall()
