@@ -277,6 +277,11 @@ namespace gamelogic
             TickTimer.Enabled = true;
         }
 
+        ~Game()
+        {
+            Console.WriteLine("Destroyed");
+        }
+
         public Player Connect() {
             Console.WriteLine("Connect is called");
             if (players.Count > 2)
@@ -319,7 +324,17 @@ namespace gamelogic
         }
 
         public void Disconnect(Player p) {
-            players.Remove(p);
+            try
+            {
+
+                players.Remove(p);
+                Console.WriteLine(players.Count);
+                if (players.Count == 0)
+                {
+
+                }
+            }
+            catch { Console.WriteLine("catched"); }
         }
 
         public void AddScore(Player p)
@@ -340,6 +355,10 @@ namespace gamelogic
             {
                 ball.setStatus("active");
             }
+            else if (status == "finish")
+            {
+                ball.setStatus("inactive");
+            }
         }
 
         public void Tick(Object source, ElapsedEventArgs e)
@@ -354,59 +373,78 @@ namespace gamelogic
 
         public void BallControl()
         {
-            if (ball.status != "active")
-            {
-                return;
-            }
+            
+                if (ball.status != "active")
+                {
+                    return;
+                }
+
 
             if (ball.isGoingLeft)
             {
-                if (CollisionLeft(ball))
+                try
                 {
-                    AddScore((Player)players[0]);
-                    ball.initLocation();
+                    if (CollisionLeft(ball))
+                    {
+                        AddScore((Player)players[0]);
+                        ball.initLocation();
+                    }
+                    if (CollisionDown(ball))
+                    {
+                        ball.isGoingTop = true;
+                    }
+                    if (CollisionUp(ball))
+                    {
+                        ball.isGoingTop = false;
+                    }
+                    if (!CollisionPlayer((Player)players[0]))
+                    {
+                        ball.move();
+                    }
+                    else
+                    {
+                        ball.changeOrientation();
+                    }
                 }
-                if (CollisionDown(ball))
+                catch
                 {
-                    ball.isGoingTop = true;
+                    Disconnect((Player)players[0]);
                 }
-                if (CollisionUp(ball))
-                {
-                    ball.isGoingTop = false;
-                }
-                if (!CollisionPlayer((Player)players[0]))
-                {
-                    ball.move();
-                }
-                else
-                {
-                    ball.changeOrientation();
-                }
+
             }
             else
             {
-                if (CollisionRight(ball))
+                try
                 {
-                    AddScore((Player)players[1]);
-                    ball.initLocation();
+                    if (CollisionRight(ball))
+                    {
+                        AddScore((Player)players[1]);
+                        ball.initLocation();
+                    }
+                    if (CollisionUp(ball))
+                    {
+                        ball.isGoingTop = false;
+                    }
+                    if (CollisionDown(ball))
+                    {
+                        ball.isGoingTop = true;
+                    }
+                    if (!CollisionPlayer((Player)players[1]))
+                    {
+                        ball.move();
+                    }
+                    else
+                    {
+                        ball.changeOrientation();
+                    }
                 }
-                if (CollisionUp(ball))
+                catch
                 {
-                    ball.isGoingTop = false;
+                    Disconnect((Player)players[1]);
                 }
-                if (CollisionDown(ball))
-                {
-                    ball.isGoingTop = true;
-                }
-                if (!CollisionPlayer((Player)players[1]))
-                {
-                    ball.move();
-                }
-                else
-                {
-                    ball.changeOrientation();
-                }
+                
             }
+           
         }
 
         public Boolean CollisionPlayer(Player player)
