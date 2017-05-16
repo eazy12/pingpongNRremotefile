@@ -30,6 +30,7 @@ namespace gamelogic
 
         public void initLocation()
         {
+           
             x = game.Width / 2;
             y = r.Next(10, game.Height - 10);
 
@@ -259,7 +260,7 @@ namespace gamelogic
         protected Ball ball;
         protected int width = 427, height = 241;
         public int speedSlide = 5;
-        public String status = "init"; // ENUM: init/playing/finish
+        public String status = "init"; // ENUM: init/playing/finish/waiting2player
 
         public System.Timers.Timer TickTimer;
 
@@ -288,11 +289,18 @@ namespace gamelogic
             {
                 return null;
             }
+            else if (players.Count == 1)
+            {
+                SetStatus("waiting2player");
+            }
+            else if (players.Count == 2)
+            {
+                SetStatus("playing");
+            }
 
             Player p = new Player(this, players.Count);
             players.Add(p);
 
-            //Tick();
             return p;
         }
 
@@ -359,6 +367,10 @@ namespace gamelogic
             {
                 ball.setStatus("inactive");
             }
+            else if ( status == "waiting2player")
+            {
+                ball.setStatus("inactive");
+            }
         }
 
         public void Tick(Object source, ElapsedEventArgs e)
@@ -366,6 +378,10 @@ namespace gamelogic
             if (status == "playing")
             {
                 BallControl();
+            }
+            else if (status == "finish")
+            {
+                TickTimer.Enabled = false;
             }
 
             DoUpdateInfo();
@@ -387,6 +403,10 @@ namespace gamelogic
                     if (CollisionLeft(ball))
                     {
                         AddScore((Player)players[0]);
+                        if( getPlayer(0).Score > 2)
+                        {
+                            status = "finish";
+                        }
                         ball.initLocation();
                     }
                     if (CollisionDown(ball))
@@ -419,6 +439,10 @@ namespace gamelogic
                     if (CollisionRight(ball))
                     {
                         AddScore((Player)players[1]);
+                        if (getPlayer(0).Score > 2)
+                        {
+                            status = "finish";
+                        }
                         ball.initLocation();
                     }
                     if (CollisionUp(ball))
@@ -440,6 +464,7 @@ namespace gamelogic
                 }
                 catch
                 {
+                    if( players.Count > 1)
                     Disconnect((Player)players[1]);
                 }
                 
