@@ -5,14 +5,6 @@ using System.Timers;
 
 namespace gamelogic
 {
-    public class UpdateInfo : MarshalByRefObject
-    {
-        public UpdateInfo()
-        {
-
-        }
-    }
-
     public class Ball : MarshalByRefObject
     {
         protected int x, y, width = 14, height = 16, speedY = 2, speedX = 2;
@@ -254,8 +246,6 @@ namespace gamelogic
     public class Game : MarshalByRefObject
     {
         public delegate void UpdateInfoHandler(object sender, EventArgs e);
-        public event UpdateInfoHandler UpdateInfoEvent;
-        protected UpdateInfo updateInfo = new UpdateInfo();
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
         protected Ball ball;
         protected int width = 427, height = 241;
@@ -270,7 +260,6 @@ namespace gamelogic
         {
             Console.WriteLine("I am created");
             CreateBall();
-            //Tick();
 
             TickTimer = new System.Timers.Timer(5);
             TickTimer.Elapsed += Tick; 
@@ -285,6 +274,7 @@ namespace gamelogic
 
         public Player Connect() {
             Console.WriteLine("Connect is called");
+
             if (players.Count > 2)
             {
                 return null;
@@ -309,7 +299,8 @@ namespace gamelogic
             if (players.Count > index)
             {
                 return (Player)players[index];
-            } else
+            }
+            else
             {
                 return null;
             }
@@ -322,7 +313,6 @@ namespace gamelogic
 
         public void DoUpdateInfo()
         {
-            //UpdateInfoEvent?.Invoke(this, new EventArgs());
             callback?.Invoke();
         }
 
@@ -334,12 +324,11 @@ namespace gamelogic
         public void Disconnect(Player p) {
             try
             {
-
                 players.Remove(p);
                 Console.WriteLine(players.Count);
                 if (players.Count == 0)
                 {
-
+                    
                 }
             }
             catch { Console.WriteLine("catched"); }
@@ -430,7 +419,6 @@ namespace gamelogic
                 {
                     Disconnect((Player)players[0]);
                 }
-
             }
             else
             {
@@ -439,7 +427,7 @@ namespace gamelogic
                     if (CollisionRight(ball))
                     {
                         AddScore((Player)players[1]);
-                        if (getPlayer(0).Score > 2)
+                        if (getPlayer(1).Score > 2)
                         {
                             status = "finish";
                         }
