@@ -155,6 +155,7 @@ namespace gamelogic
         protected int x, y, width = 15, height = 70;
         protected Game game;
         protected int score = 0;
+        protected string nickname;
 
         public Player(Game g, int playerNum)
         {
@@ -206,6 +207,18 @@ namespace gamelogic
             }
         }
 
+        public string NickName
+        {
+            get
+            {
+                return nickname;
+            }
+            set
+            {
+                nickname = value;
+            }
+        }
+
         public int X
         {
             get
@@ -247,6 +260,7 @@ namespace gamelogic
     {
         public delegate void UpdateInfoHandler(object sender, EventArgs e);
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
+        protected ArrayList playersNicknames = new ArrayList(); // 0 player - left side; 1 player = right side;
         protected Ball ball;
         protected int width = 427, height = 241;
         public int speedSlide = 5;
@@ -272,7 +286,7 @@ namespace gamelogic
             Console.WriteLine("Destroyed");
         }
 
-        public Player Connect() {
+        public Player Connect(string nick) {
             Console.WriteLine("Connect is called");
 
             if (players.Count > 2)
@@ -288,6 +302,7 @@ namespace gamelogic
                 SetStatus("playing");
             }
 
+            playersNicknames.Add(nick);
             Player p = new Player(this, players.Count);
             players.Add(p);
 
