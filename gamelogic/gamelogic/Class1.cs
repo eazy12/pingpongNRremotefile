@@ -157,9 +157,10 @@ namespace gamelogic
         protected int score = 0;
         protected string nickname;
 
-        public Player(Game g, int playerNum)
+        public Player(Game g, int playerNum, string nick)
         {
             game = g;
+            NickName = nick;
             
             if (playerNum == 0)
             {
@@ -260,7 +261,6 @@ namespace gamelogic
     {
         public delegate void UpdateInfoHandler(object sender, EventArgs e);
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
-        protected ArrayList playersNicknames = new ArrayList(); // 0 player - left side; 1 player = right side;
         protected Ball ball;
         protected int width = 427, height = 241;
         public int speedSlide = 5;
@@ -301,9 +301,8 @@ namespace gamelogic
             {
                 SetStatus("playing");
             }
-
-            playersNicknames.Add(nick);
-            Player p = new Player(this, players.Count);
+            
+            Player p = new Player(this, players.Count, nick);
             players.Add(p);
 
             return p;
