@@ -281,8 +281,8 @@ namespace gamelogic
             TickTimer.AutoReset = true;
             TickTimer.Enabled = true;
 
-            string connectionString = @"Provider=Microsoft.ACE.OLEDB.10.0;" +
-@"Data Source=C:\Users\ilmir\Source\Repos\pingpongNRserver2\server\server\bin\Debug\db.accdb;" +
+            string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;" +
+@"Data Source=C:\Users\WorstOne\Source\Repos\pingpongNRserver2\server\server\db1.accdb;" +
 @"User Id=;Password=;";
             connection = new OleDbConnection(connectionString);
 
@@ -312,7 +312,7 @@ namespace gamelogic
             Player p = new Player(this, players.Count, nick);
             players.Add(p);
 
-            onFinishMatch();
+            
 
             return p;
         }
@@ -369,8 +369,12 @@ namespace gamelogic
 
         public void onFinishMatch()
         {
-            string queryString = "INSERT INTO data (player1, player2, score1, score2, play_date) VALUES ('sdaww', 'asdasd', '1', '2', '10:00:00' )";
+            Player temp1 = (Player)players[0];
+            Player temp2 = (Player)players[1];
             
+            string queryString = "INSERT INTO data (player1, player2, score1, score2, play_date) VALUES ( " +"'" + temp1.NickName + "', '" + temp2.NickName+ "', '" 
+                                                                                                                        + temp1.Score + "', '" + temp2.Score + "', '" + System.DateTime.Now.ToShortDateString().ToString() + "' " + ")";
+            Console.WriteLine(queryString + " is wroten");
             OleDbCommand command = new OleDbCommand(queryString, connection);
             connection.Open();
             command.ExecuteNonQuery();
@@ -428,6 +432,7 @@ namespace gamelogic
                         if( getPlayer(0).Score > 2)
                         {
                             status = "finish";
+                            onFinishMatch();
                         }
                         ball.initLocation();
                     }
@@ -463,6 +468,7 @@ namespace gamelogic
                         if (getPlayer(1).Score > 2)
                         {
                             status = "finish";
+                            onFinishMatch();
                         }
                         ball.initLocation();
                     }
