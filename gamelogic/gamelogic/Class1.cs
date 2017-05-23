@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Collections;
 using System.Timers;
+using System.Data.OleDb;
 
 namespace gamelogic
 {
@@ -265,6 +266,7 @@ namespace gamelogic
         protected int width = 427, height = 241;
         public int speedSlide = 5;
         public String status = "init"; // ENUM: init/playing/finish/waiting2player
+        OleDbConnection connection;
 
         public System.Timers.Timer TickTimer;
 
@@ -279,6 +281,12 @@ namespace gamelogic
             TickTimer.Elapsed += Tick; 
             TickTimer.AutoReset = true;
             TickTimer.Enabled = true;
+
+            string connectionString = @"Provider=Microsoft.ACE.OLEDB.10.0;" +
+@"Data Source=C:\Users\ilmir\Source\Repos\pingpongNRserver2\server\server\bin\Debug\db.accdb;" +
+@"User Id=;Password=;";
+            connection = new OleDbConnection(connectionString);
+
         }
 
         ~Game()
@@ -304,6 +312,8 @@ namespace gamelogic
             
             Player p = new Player(this, players.Count, nick);
             players.Add(p);
+
+            onFinishMatch();
 
             return p;
         }
@@ -356,6 +366,16 @@ namespace gamelogic
         public void ChangePosition()
         {
             //Tick();
+        }
+
+        public void onFinishMatch()
+        {
+            string queryString = "INSERT INTO data (player1, player2, score1, score2, play_date) VALUES ('sdaww', 'asdasd', '1', '2', '10:00:00' )";
+            
+            OleDbCommand command = new OleDbCommand(queryString, connection);
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void SetStatus(String newStatus)
