@@ -261,11 +261,11 @@ namespace gamelogic
     {
         public delegate void UpdateInfoHandler(object sender, EventArgs e);
         protected ArrayList players = new ArrayList(); // 0 player - left side; 1 player = right side;
+        protected int playerCount = 0;
         protected Ball ball;
         protected int width = 427, height = 241;
         public int speedSlide = 5;
         public String status = "init"; // ENUM: init/playing/finish/waiting2player
-        OleDbConnection connection;
 
         public System.Timers.Timer TickTimer;
 
@@ -281,10 +281,7 @@ namespace gamelogic
             TickTimer.AutoReset = true;
             TickTimer.Enabled = true;
 
-            string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;" +
-@"Data Source=C:\Users\WorstOne\Source\Repos\pingpongNRserver2\server\server\db1.accdb;" +
-@"User Id=;Password=;";
-            connection = new OleDbConnection(connectionString);
+            
 
         }
 
@@ -311,7 +308,7 @@ namespace gamelogic
             
             Player p = new Player(this, players.Count, nick);
             players.Add(p);
-
+            playerCount += 1;
             
 
             return p;
@@ -347,12 +344,9 @@ namespace gamelogic
         public void Disconnect(Player p) {
             try
             {
-                players.Remove(p);
-                Console.WriteLine(players.Count);
-                if (players.Count == 0)
-                {
-                    
-                }
+                players[players.IndexOf(p)] = null;
+                playerCount -= 1;
+                Console.WriteLine("Игрок отключился с ником " +  p.NickName  + ". Игроков осталось: " + playerCount.ToString());
             }
             catch { Console.WriteLine("catched"); }
         }
@@ -367,18 +361,25 @@ namespace gamelogic
             //Tick();
         }
 
-        public void onFinishMatch()
+        public void onFinishMatch(Player p0, Player p1 )
         {
-            Player temp1 = (Player)players[0];
-            Player temp2 = (Player)players[1];
-            
-            string queryString = "INSERT INTO data (player1, player2, score1, score2, play_date) VALUES ( " +"'" + temp1.NickName + "', '" + temp2.NickName+ "', '" 
+            Player temp1 = p0;
+            Player temp2 = p1;
+
+            OleDbConnection connection;
+
+            string queryString = "INSERT INTO data (player1, player2, score1, score2, play_date) VALUES ( " + "'" + temp1.NickName + "', '" + temp2.NickName + "', '"
                                                                                                                         + temp1.Score + "', '" + temp2.Score + "', '" + System.DateTime.Now.ToShortDateString().ToString() + "' " + ")";
-            Console.WriteLine(queryString + " is wroten");
+            string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;" +
+@"Data Source=C:\Users\WorstOne\Source\Repos\pingpongNRserver2\server\server\db1.accdb;" +
+@"User Id=;Password=;";
+            connection = new OleDbConnection(connectionString);
+
             OleDbCommand command = new OleDbCommand(queryString, connection);
             connection.Open();
             command.ExecuteNonQuery();
             connection.Close();
+            Console.WriteLine(queryString + " is wroten");
         }
 
         public void SetStatus(String newStatus)
@@ -416,10 +417,10 @@ namespace gamelogic
         public void BallControl()
         {
             
-                if (ball.status != "active")
-                {
-                    return;
-                }
+            if (ball.status != "active")
+            {
+                return;
+            }
 
 
             if (ball.isGoingLeft)
@@ -431,8 +432,10 @@ namespace gamelogic
                         AddScore((Player)players[0]);
                         if( getPlayer(0).Score > 2)
                         {
-                            status = "finish";
-                            onFinishMatch();
+                            SetStatus("finish");
+                            ball.initLocation();
+                            onFinishMatch((Player)players[0], (Player)players[1]);
+                            return;
                         }
                         ball.initLocation();
                     }
@@ -455,6 +458,7 @@ namespace gamelogic
                 }
                 catch
                 {
+                    Console.WriteLine("HERE1");
                     Disconnect((Player)players[0]);
                 }
             }
@@ -467,8 +471,10 @@ namespace gamelogic
                         AddScore((Player)players[1]);
                         if (getPlayer(1).Score > 2)
                         {
-                            status = "finish";
-                            onFinishMatch();
+                            SetStatus("finish");
+                            ball.initLocation();
+                            onFinishMatch((Player)players[0], (Player)players[1]);
+                            return;
                         }
                         ball.initLocation();
                     }
@@ -491,10 +497,11 @@ namespace gamelogic
                 }
                 catch
                 {
-                    if( players.Count > 1)
-                    Disconnect((Player)players[1]);
+                    Console.WriteLine("HERE2");
+                    if (players.Count > 1)
+                        Disconnect((Player)players[1]);
                 }
-                
+
             }
            
         }
